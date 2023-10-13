@@ -87,3 +87,58 @@ env(safe-area-inset-left) !important
 
 For the landscape mode, in order to take up all the available space, we need to add a meta tag for the content that is:
 <meta name="viewport" content="width=device-width,viewport-fit=cover">
+- but take care that you have enough paddingn left and right.
+
+## Service Worker Overview
+- Js file that is running on its own thread and acts as a middleware, including resources and api calls
+- like a mini server that is installed on the client side, that can react to http requests even if we are offline
+
+- Runs in the browsers engine
+- https is required
+- installed by a web page
+- own thread and lifecycle
+- act as a network proxy or local web server in the name of the real server 
+- can work in the background
+- no need for user's permission
+- every service worker has their Scope (whole domain or only scope) and will manage those pages in that Scope
+- after installed it can serve the files requested from the scope
+- only one service worker is allowed
+- WebKit adds partition management
+
+On this page we can look at all the service workers that are currently running or just installed
+chrome://serviceworker-internals/
+Some are paused. But if you open the app, it will run, and keep running after closing the app for usually 40 more seconds
+
+## Caching and Resources with Service workers
+- Service worker has a local cache, where we can cache all or some resources
+- Lots of js promises and prefetch on installation
+- Or cache on request
+- App shell pattern
+
+
+Serving the resources
+- The service worker will respond for the PWA
+- Can serve from cache
+- Can forward requests to the network
+- Can synthesize a response
+- any mixed algorithm is possible
+- Very low level
+
+- In theory we could remove the real server but we never wanna do that because something can always happen to the cached data (deleted, removed etc).
+
+- When you make changes to the service worker.tick the "Update on reload" option to enable updates, else it will always take the old service worker.
+- The cached resources will be available offline - there is a testing option for offline
+- You always need to cache your html of course - to make it available offline
+- Icons and manifest don't need to be cached, cause they are happening around our PWA not inside of our PWA
+
+### Can we cache assets that don't come from our scope? 
+- Cross domain source 
+- We can cache, but we can only serve it for our PWA.
+
+## Serving Resources with a ServiceWorker
+- we can use workbox for the service workers
+- The cache store api is a dictionary where the key is the http request and the value the http response
+- If you mess up the service worker file, in can take up to one day to get it refreshed on safari (in chrome and firefox it should take a few seconds) but that's bad 
+
+## How to update the resources of the service Worker
+- Problem: We have no simple way to check which assets had changed
