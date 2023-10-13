@@ -142,3 +142,58 @@ Serving the resources
 
 ## How to update the resources of the service Worker
 - Problem: We have no simple way to check which assets had changed
+- We need to define our own algorithm to check
+
+## How can we use the local storage to add our notes?
+On app start check for the notes
+ if (localStorage.getItem("notes")) {
+    notes = JSON.parse(localStorage.getItem("notes"));
+  }
+  
+ On any changes, call save();
+ 
+ function save() {
+  localStorage.setItem("notes", JSON.stringify(notes));
+}
+
+## Problem: The local PWA will always have the old version. How can we solve that? - Cache first has its limitations, because reload will always use the cached stuff.
+
+One Solution:
+We could solve that by changig one byte in the service worker - such as a version number, or just an empty space.
+If there are any small changes the browser will detect and update the assets.
+
+Second solution: Change the algorithm "State while revalidate strategy"
+- We check the cache but we also always use the network and I'm updating the cache everytime it is requested.
+
+Cache Service Strategies
+- Cache first
+- Network first
+- Stale while revalidate
+
+## Updating resources
+- Files are saved in the client
+- Updating files in the server won't trigger any automatic change in the client
+- We need to define and code an update algorithm
+- It will need a process within your build system for hashing or versioning files
+
+## Service Worker lifecycle
+Parsed > Installing > Waiting > Activating > Activated > Paused / Terminated > Reactivated 
+- It might not be the same instance 
+- cause after 15 - 40 seconds they are gona again
+- so we don't wanna use global variables with them
+- We can't control the idle timem of a service worker
+
+WebAPK on android is installed / minted by the google play store
+
+## Distribution Models
+1. browser
+2. enterprise solution (Google Play iFrame) 
+3. App Store
+
+- The service worker is always the component responsible for all of the resrouces of our app. 
+- We always ship a package that will launch the URL and the service worker will manage the requests, assets and resources
+
+Tools to Create PWA Launchers
+- IDEs for native development (Android Studio, XCode etc) (Bubblewrap - create an Android package ready for the play store)
+- Command Line Tools (CLIs)
+- PWA Builder 
